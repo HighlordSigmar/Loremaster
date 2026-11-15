@@ -137,6 +137,7 @@ dofile(DIR .. "Core.lua")
 dofile(DIR .. "UI.lua")
 dofile(DIR .. "Levels.lua")
 dofile(DIR .. "Auto.lua")
+dofile(DIR .. "Tracker.lua")
 if QLLP_AFTER then QLLP_AFTER() end
 
 local function fire(e, a1)

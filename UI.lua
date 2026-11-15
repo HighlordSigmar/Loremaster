@@ -928,6 +928,8 @@ SlashCmdList["LOREMASTER"] = function(msg)
     Loremaster_Char.ignored = {}
     ZQ:Refresh()
     Print("All ignored quests are visible again.")
+  elseif msg == "tracker" or msg == "tracker lock" or msg == "tracker reset" then
+    ZQ:TrackerCommand(string.sub(msg, 9))
   elseif msg == "auto" or msg == "auto accept" or msg == "auto turnin" then
     ZQ:AutoCommand(string.sub(msg, 6))
   elseif msg == "levels" or msg == "levels tags" or msg == "levels tracker" then
@@ -956,6 +958,9 @@ SlashCmdList["LOREMASTER"] = function(msg)
     Print("/lm minimap reset - put the button back on the minimap")
     Print("/lm hints - quest giver hints: off / name / name and coordinates")
     Print("/lm unignore - show all ignored quests again")
+    Print("/lm tracker - Loremaster's quest tracker on/off (Shift-click quests in the quest log to track them)")
+    Print("/lm tracker lock - keep the tracker in place / let it move again")
+    Print("/lm tracker reset - put the tracker back in its starting place")
     Print("/lm auto - accept and turn in quests automatically on/off (hold Shift at an NPC to do it yourself)")
     Print("/lm auto accept - accepting on/off")
     Print("/lm auto turnin - turning in on/off")

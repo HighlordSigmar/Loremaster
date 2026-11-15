@@ -1,4 +1,4 @@
-Loremaster 2.6.1 - for OctoWoW (1.12 client)
+Loremaster 2.7.0 - for OctoWoW (1.12 client)
 =============================================
 
 Shows every quest of a zone and which ones you already did:
@@ -22,6 +22,9 @@ USE
   Minimap button: drag it anywhere on the screen, or Shift+drag to slide
   it around the minimap. Left-click: this zone. Right-click: all zones.
   /lm unignore    show all ignored quests again
+  /lm tracker     Loremaster's quest tracker on/off
+  /lm tracker lock    keep the tracker in place / let it move again
+  /lm tracker reset   put the tracker back in its starting place
   /lm auto        accept and turn in quests automatically on/off
   /lm auto accept     accepting on/off
   /lm auto turnin     turning in on/off
@@ -59,6 +62,14 @@ NOTES
     are standing in and says so in the chat. This is saved for all your
     characters. "/lm moved" lists these moves: send them to whoever keeps
     the quest data so the next version has them right from the start.
+  - QUEST TRACKER: Loremaster has its own tracker window with the quests
+    you track, their objectives and progress, and "Ready to turn in" when
+    they are done. It keeps its own list, so other addons cannot clear it.
+    Shift-click a quest in the quest log (chat box closed) to track it or
+    stop tracking it. In the tracker: click a quest to open it in the quest
+    log, right-click to stop tracking. Drag the "Quests" title to move it.
+    Turned-in and abandoned quests leave it by themselves. While it is on,
+    the game's own tracker is hidden (/lm tracker turns it off again).
   - AUTO ACCEPT / TURN IN: talking to an NPC accepts its new quests and
     turns in the quests that are ready. It only clicks a quest for turn-in
     when your quest log says it is done, and clicks each step of a quest

@@ -96,6 +96,20 @@ a GM Island spawn). Loch Modan NPCs also on the Grim Reaches map are pinned to
 Loch Modan in GIVER_ZONE (level rule picked Grim Reaches for their L38-48 quests).
 Not used yet: repeatable, daily, max, type, exclusive, repMin*, hardcore.
 
+## Quest tracker (v2.7.0, Tracker.lua)
+User's game watches vanished on progress. test_watch.lua runs Turtle's real
+QuestLogFrame.lua watch code (AutoQuestWatch_*) with/without Loremaster: a
+shift-click watch survives progress either way, so another addon/SuperWoW or
+the client clears it. Tracker.lua keeps Loremaster_Char.tracked[title] (first
+login imports the game's watches), draws LoremasterTracker (title rows: click
+opens quest log, right-click untracks; objective lines from
+GetQuestLogLeaderBoard(j, index)), hides QuestWatchFrame (OnShow + after
+QuestWatch_Update), answers IsQuestWatched for our list only while
+QuestLog_Update draws (check marks), and takes shift-click (chat closed) in
+the quest log. Quests gone from the log (not under a collapsed header) are
+dropped. Settings: Loremaster_DB.tracker / trackerLocked / trackerPos.
+test_tracker.lua runs it with Turtle's quest log code.
+
 ## Same-title quests (v2.6.1)
 ResolveID used the quest log level as a hard filter. When the game's level
 for part 2 equals the data level of part 1 (The Balance of Nature 456/457,

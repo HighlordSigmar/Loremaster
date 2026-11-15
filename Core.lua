@@ -466,7 +466,7 @@ function ZQ:ScanLog()
     if table.getn(removed) == 1 then
       local id = removed[1]
       local entry = self.log[id]
-      if self.abandoned and self.abandoned == entry.title then
+      if self.abandoned and self.abandoned == entry.title and GetTime() - (self.abandonedAt or 0) < 10 then
         -- abandoned: not done
       elseif not Loremaster_Char.done[id] then
         self:SetDone(id, true)
@@ -689,6 +689,7 @@ end
 local OriginalAbandonQuest = AbandonQuest
 AbandonQuest = function()
   ZQ.abandoned = StripLevelTag(GetAbandonQuestName())
+  ZQ.abandonedAt = GetTime()   -- the "abandoned" note is only good for a few seconds
   if ZQ.abandoned and Loremaster_Char then
     ZQ:Safe("forgetting an abandoned quest", ZQ.LeftLog, ZQ.abandoned, ZQ.logtitles[ZQ.abandoned])
   end

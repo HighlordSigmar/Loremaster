@@ -117,6 +117,10 @@ QuestWatch_Update, and every second from the tracker's own OnUpdate while shown
 live log is dropped unless a header is collapsed (only then ZQ.log is used;
 ZQ.log is re-read 0.3 s later than the tracker update, so it held turned-in
 quests).
+2.7.2: with ANY collapsed header ScanLog keeps every quest it cannot see, so
+turned-in quests stayed in ZQ.log (and the tracker) until all headers were
+expanded. ZQ:LeftLog(title, id) now drops the quest from ZQ.log/logtitles and
+the tracker the moment GetQuestReward or AbandonQuest is called.
 
 ## Same-title quests (v2.6.1)
 ResolveID used the quest log level as a hard filter. When the game's level

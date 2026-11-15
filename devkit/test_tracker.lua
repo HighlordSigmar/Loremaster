@@ -83,7 +83,7 @@ LOG = {
 WATCHED = { [5] = true }
 SELECTED = 2
 function GetNumQuestLogEntries() return table.getn(LOG), 5 end
-function GetQuestLogTitle(i) local e = LOG[i]; if not e then return nil end return e[1], e[2], e[3], e[4], nil, e[6] end
+function GetQuestLogTitle(i) local e = LOG[i]; if not e then return nil end return e[1], e[2], e[3], e[4], e[5], e[6] end
 function GetQuestLogSelection() return SELECTED end
 function SelectQuestLogEntry(i) SELECTED = i end
 function IsQuestWatched(i) return WATCHED[i] end
@@ -179,6 +179,27 @@ show("tracking Lost Necklace")
 table.remove(LOG); ev("QUEST_LOG_UPDATE")
 show("Lost Necklace turned in (Loremaster's own copy of the log not re-read yet)")
 print("  still saved as tracked: " .. tostring(Loremaster_Char.tracked["Lost Necklace"]))
+
+-- a collapsed header somewhere in the log: turn in and abandon tracked quests
+table.insert(LOG, { "Duskwood", nil, nil, 1, 1 })   -- collapsed header
+table.insert(LOG, { "Lost Necklace", 6, nil, nil, nil, 1 })
+table.insert(LOG, { "Bounty on Murlocs", 7 })
+Loremaster:ScanLog(); Loremaster_Char.tracked["Lost Necklace"] = true; Loremaster_Char.tracked["Bounty on Murlocs"] = true
+ev("QUEST_LOG_UPDATE"); show("collapsed header + tracking Lost Necklace and Bounty on Murlocs")
+TITLE = "Lost Necklace"; function GetTitleText() return TITLE end
+GetQuestReward(0)                       -- turn it in (game removes it from the log right after)
+for k, e in ipairs(LOG) do if e[1] == "Lost Necklace" then table.remove(LOG, k) break end end
+Loremaster:ScanLog(); ev("QUEST_LOG_UPDATE")
+show("Lost Necklace turned in, a header still collapsed")
+function GetAbandonQuestName() return "Bounty on Murlocs" end
+AbandonQuest()
+for k, e in ipairs(LOG) do if e[1] == "Bounty on Murlocs" then table.remove(LOG, k) break end end
+Loremaster:ScanLog(); ev("QUEST_LOG_UPDATE")
+show("Bounty on Murlocs abandoned, a header still collapsed")
+local inlog = {} for id, e in pairs(Loremaster.log) do table.insert(inlog, e.title) end table.sort(inlog)
+print("  Loremaster's copy of the quest log: " .. table.concat(inlog, ", "))
+print("  Bounty on Murlocs counted as done: " .. tostring(Loremaster_Char.done[(Loremaster:GetIndex().titles["Bounty on Murlocs"] or {})[1] or 0] ~= nil))
+table.remove(LOG)  -- the collapsed header
 
 -- right-click: stop tracking
 this = LoremasterTrackerQuest1; arg1 = "RightButton"; LoremasterTrackerQuest1._OnClick(); ev("QUEST_LOG_UPDATE")

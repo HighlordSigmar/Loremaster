@@ -3,7 +3,7 @@
 -- Written for the 1.12 client (Lua 5.0): no "#" operator, no "%" operator.
 
 Loremaster = {
-  version = "2.7.1",
+  version = "2.7.2",
   index = nil,     -- built once per session
   inferred = {},   -- quests counted as done because a follow-up is done
   skills = {},     -- professions the player knows
@@ -481,12 +481,26 @@ function ZQ:ScanLog()
   return changed
 end
 
+-- A quest surely left the quest log (turned in or abandoned). Forget it now:
+-- when a header is collapsed ScanLog keeps quests it cannot see, so it would
+-- never notice this one is gone (the tracker kept turned-in quests).
+function ZQ:LeftLog(title, id)
+  if id then self.log[id] = nil end
+  for other, entry in pairs(self.log) do
+    if entry.title == title and (not id or other == id) then self.log[other] = nil end
+  end
+  if self.logtitles[title] and (not id or self.logtitles[title] == id) then self.logtitles[title] = nil end
+  if Loremaster_Char and Loremaster_Char.tracked then Loremaster_Char.tracked[title] = nil end
+  if self.UpdateTracker then self:Safe("updating the quest tracker", self.UpdateTracker) end
+end
+
 -- called when the player clicks "Complete Quest"
 function ZQ:OnTurnIn(title)
   if not title or not self:HasDatabase() or not Loremaster_Char then return end
   title = StripLevelTag(title)
   local id = self.logtitles[title] or self:ResolveID(title, nil, nil)
   if id then self:SetDone(id, true) end
+  self:LeftLog(title, id)
 end
 
 ------------------------------------------------------------------------
@@ -675,5 +689,8 @@ end
 local OriginalAbandonQuest = AbandonQuest
 AbandonQuest = function()
   ZQ.abandoned = StripLevelTag(GetAbandonQuestName())
+  if ZQ.abandoned and Loremaster_Char then
+    ZQ:Safe("forgetting an abandoned quest", ZQ.LeftLog, ZQ.abandoned, ZQ.logtitles[ZQ.abandoned])
+  end
   return OriginalAbandonQuest()
 end

@@ -42,6 +42,8 @@ function UnitExists(u) return u == "player" or (u == "npc" and NPC_NAME ~= nil) 
 function UnitIsPlayer(u) return u == "player" end
 function UnitIsUnit(a, b) return a == b end
 function GetNumAddOns() return 1 end
+function GetNumQuestWatches() return 0 end
+function GetQuestIndexForWatch() return nil end
 function GetAddOnInfo() return "Loremaster" end
 function IsAddOnLoaded() return 1 end
 function UnitName(u) if u == "npc" then return NPC_NAME end return "Tester" end

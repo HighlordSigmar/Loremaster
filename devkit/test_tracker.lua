@@ -131,7 +131,9 @@ UIErrorsFrame = { AddMessage = function() end }
 QuestLogListScrollFrame = Frame("QuestLogListScrollFrame")
 Loremaster_DB = { minimap = {} }; Loremaster_Char = { done = {}, ignored = {} }
 local E = LoremasterTrackerEvents
-local function ev(e) this = E; event = e; E._OnEvent(); this = E; E._OnUpdate() end
+NOW = 0; function GetTime() return NOW end
+local function frames(sec) for k = 1, sec * 10 do NOW = NOW + 0.1; this = E; E._OnUpdate(); if LoremasterTracker._shown then this = LoremasterTracker; LoremasterTracker._OnUpdate() end end end
+local function ev(e) this = E; event = e; E._OnEvent(); frames(1.5) end
 local function show(label)
   print("---- " .. label .. " ----")
   if not LoremasterTracker._shown then print("  tracker hidden") else
@@ -157,6 +159,12 @@ QuestWatchFrame._shown = true; QuestWatch_Update()  -- the game tries to show it
 ev("QUEST_LOG_UPDATE")
 show("Defias Brotherhood complete, game tries to show its tracker")
 
+-- progress WITHOUT any event reaching Loremaster: the tracker reads it within a second
+OBJ[5][1] = { "Princess slain: 1/1", true }
+frames(1.2)
+show("progress with no event: picked up by the tracker's own check")
+OBJ[5][1] = { "Princess slain: 0/1" }
+
 -- click a tracked quest: opens the quest log there
 this = LoremasterTrackerQuest1; arg1 = "LeftButton"; LoremasterTrackerQuest1._OnClick(); print("  selected in the quest log: line " .. SELECTED)
 -- turned in: leaves the log, leaves the tracker
@@ -164,6 +172,13 @@ table.remove(LOG, 2); OBJ[2] = nil; OBJ[4] = OBJ[5]; OBJ[5] = nil
 Loremaster:ScanLog(); ev("QUEST_LOG_UPDATE")
 show("Defias Brotherhood turned in")
 print("  still saved as tracked: " .. tostring(Loremaster_Char.tracked["The Defias Brotherhood"]))
+-- turned in right away (before Loremaster re-read its log): gone at once
+table.insert(LOG, { "Lost Necklace", 6 })
+Loremaster:ScanLog(); Loremaster_Char.tracked["Lost Necklace"] = true; ev("QUEST_LOG_UPDATE")
+show("tracking Lost Necklace")
+table.remove(LOG); ev("QUEST_LOG_UPDATE")
+show("Lost Necklace turned in (Loremaster's own copy of the log not re-read yet)")
+print("  still saved as tracked: " .. tostring(Loremaster_Char.tracked["Lost Necklace"]))
 
 -- right-click: stop tracking
 this = LoremasterTrackerQuest1; arg1 = "RightButton"; LoremasterTrackerQuest1._OnClick(); ev("QUEST_LOG_UPDATE")

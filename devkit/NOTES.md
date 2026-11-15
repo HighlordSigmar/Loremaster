@@ -109,6 +109,14 @@ QuestLog_Update draws (check marks), and takes shift-click (chat closed) in
 the quest log. Quests gone from the log (not under a collapsed header) are
 dropped. Settings: Loremaster_DB.tracker / trackerLocked / trackerPos.
 test_tracker.lua runs it with Turtle's quest log code.
+2.7.1 (in game: progress stuck at 0/7 until re-tracked; turned-in quest
+stayed): updates now 0.2 s and 1 s after QUEST_LOG_UPDATE / QUEST_WATCH_UPDATE /
+UI_INFO_MESSAGE / QUEST_FINISHED / UNIT_QUEST_LOG_CHANGED, after every game
+QuestWatch_Update, and every second from the tracker's own OnUpdate while shown
+(pfQuest also polls the log every second). A tracked quest missing from the
+live log is dropped unless a header is collapsed (only then ZQ.log is used;
+ZQ.log is re-read 0.3 s later than the tracker update, so it held turned-in
+quests).
 
 ## Same-title quests (v2.6.1)
 ResolveID used the quest log level as a hard filter. When the game's level

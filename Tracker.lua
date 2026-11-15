@@ -151,15 +151,19 @@ function ZQ:UpdateTracker()
       end
     end
   end
-  -- tracked quests that are not visible: under a collapsed header, or gone
-  -- (turned in / abandoned: stop tracking them)
+  -- tracked quests that are not in the quest log as the game shows it now:
+  -- turned in or abandoned, so stop tracking them. Only when a header is
+  -- collapsed can a quest be hidden; then trust what Loremaster saw last.
+  -- (An empty log right after login/loading is not trusted.)
   local known = {}
-  for _, entry in pairs(ZQ.log or {}) do known[entry.title] = entry end
+  if collapsed then
+    for _, entry in pairs(ZQ.log or {}) do known[entry.title] = entry end
+  end
   for title in pairs(tracked) do
     if not seen[title] then
       if known[title] then
         table.insert(list, { title = title, level = known[title].level, hidden = true, ready = known[title].ready })
-      elseif not collapsed and ZQ.logready and GetNumQuestLogEntries() > 0 then
+      elseif ZQ.logready and GetNumQuestLogEntries() > 0 then
         tracked[title] = nil
       end
     end
@@ -252,6 +256,9 @@ if WatchUpdate then
   QuestWatch_Update = function(a1)
     local ok, err = pcall(WatchUpdate, a1)
     HideGameTracker()
+    -- the game redraws its tracker whenever quest progress changes: so do we
+    local ev = LoremasterTrackerEvents
+    if ev then ev.soon = GetTime() + 0.1; ev.later = GetTime() + 1.0 end
     if not ok then error(err, 0) end
   end
 end
@@ -297,10 +304,16 @@ end
 -- events and settings
 ------------------------------------------------------------------------
 
+-- The game can announce a quest change before the new numbers can be read
+-- (on 1.12 the progress shows up a moment later). So: update a moment after
+-- any quest event, and every second while the tracker is shown.
 local events = CreateFrame("Frame", "LoremasterTrackerEvents")
 events:RegisterEvent("PLAYER_ENTERING_WORLD")
 events:RegisterEvent("QUEST_LOG_UPDATE")
 events:RegisterEvent("UNIT_QUEST_LOG_CHANGED")
+events:RegisterEvent("QUEST_WATCH_UPDATE")
+events:RegisterEvent("QUEST_FINISHED")
+events:RegisterEvent("UI_INFO_MESSAGE")      -- "Kobold Vermin slain: 3/10"
 events:SetScript("OnEvent", function()
   if event == "PLAYER_ENTERING_WORLD" then
     if Loremaster_Char and not Loremaster_Char.tracked then
@@ -314,11 +327,24 @@ events:SetScript("OnEvent", function()
     ZQ:PlaceTracker()
     HideGameTracker()
   end
-  this.dirty = true
+  -- update now-ish, and once more a bit later
+  this.soon = GetTime() + 0.2
+  this.later = GetTime() + 1.0
 end)
 events:SetScript("OnUpdate", function()
-  if not this.dirty then return end
-  this.dirty = nil
+  local now = GetTime()
+  local due = false
+  if this.soon and now >= this.soon then this.soon = nil; due = true end
+  if this.later and now >= this.later then this.later = nil; due = true end
+  if not due then return end
+  ZQ:Safe("updating the quest tracker", ZQ.UpdateTracker)
+end)
+
+-- while the tracker is shown it also reads the quest log every second by itself
+tracker:SetScript("OnUpdate", function()
+  local now = GetTime()
+  if now < (this.tick or 0) then return end
+  this.tick = now + 1
   ZQ:Safe("updating the quest tracker", ZQ.UpdateTracker)
 end)
 

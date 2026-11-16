@@ -1,4 +1,4 @@
-Loremaster 2.8.0 - for OctoWoW (1.12 client)
+Loremaster 2.7.2 - for OctoWoW (1.12 client)
 =============================================
 
 Shows every quest of a zone and which ones you already did:
@@ -22,7 +22,6 @@ USE
   Minimap button: drag it anywhere on the screen, or Shift+drag to slide
   it around the minimap. Left-click: this zone. Right-click: all zones.
   /lm unignore    show all ignored quests again
-  /lm maplevels   zone level ranges on the world map on/off
   /lm tracker     Loremaster's quest tracker on/off
   /lm tracker lock    keep the tracker in place / let it move again
   /lm tracker reset   put the tracker back in its starting place
@@ -63,12 +62,6 @@ NOTES
     are standing in and says so in the chat. This is saved for all your
     characters. "/lm moved" lists these moves: send them to whoever keeps
     the quest data so the next version has them right from the start.
-  - ZONE LEVELS ON THE MAP: hover a zone on the continent map to see its
-    level range, like in retail: "Westfall (10-20)". The range is red/
-    orange while the zone is above your level, yellow while you are in it,
-    green/gray once you have outgrown it. Includes OctoWoW's own zones
-    (Gilneas, Tel'Abim, Grim Reaches, Balor, Moonwhisper Coast...). Ranges
-    as audited for OctoWoW by Questie-Octo (MIT license).
   - QUEST TRACKER: Loremaster has its own tracker window with the quests
     you track, their objectives and progress, and "Ready to turn in" when
     they are done. It keeps its own list, so other addons cannot clear it.

@@ -122,17 +122,6 @@ turned-in quests stayed in ZQ.log (and the tracker) until all headers were
 expanded. ZQ:LeftLog(title, id) now drops the quest from ZQ.log/logtitles and
 the tracker the moment GetQuestReward or AbandonQuest is called.
 
-## Zone levels on the world map (v2.8.0, MapLevels.lua)
-Wraps WorldMapButton_OnUpdate (called by name from WorldMapFrame.xml): after
-the game sets WorldMapFrameAreaLabel to WorldMapFrame.areaName, appends
-" (min-max)" colored like retail (below min: GetDifficultyColor(min); above
-max: GetDifficultyColor(max-2); inside: QuestDifficultyColor.difficult).
-Skipped while WorldMapFrame.poiHighlight. Ranges keyed by display name (the
-client has two AreaTable "Westfall", 40 and 206), from Questie-Octo's
-UI/ZoneLevelRange.lua + Docs/ZONE_LEVEL_RANGE_AUDIT_2026-08-21.md (MIT,
-53 zones + capital aliases). Setting: Loremaster_DB.mapLevels (nil = on).
-test_maplevels.lua checks colors and edge cases.
-
 ## Same-title quests (v2.6.1)
 ResolveID used the quest log level as a hard filter. When the game's level
 for part 2 equals the data level of part 1 (The Balance of Nature 456/457,
